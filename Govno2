@@ -1,0 +1,53 @@
+import turtle
+import math
+
+t = turtle.Turtle()
+screen = turtle.Screen()
+
+screen.setup(1200, 900)
+t.speed(0)
+t.hideturtle()
+
+
+def line(x1, y1, x2, y2):
+    t.penup()
+    t.goto(x1, y1)
+    t.pendown()
+    t.goto(x2, y2)
+
+
+def text(txt, x, y, size=14):
+    t.penup()
+    t.goto(x, y)
+    t.write(txt, font=("Arial", size, "normal"))
+
+
+# Заголовок
+text("Геометрия", -100, 350, 24)
+
+# Треугольник
+line(-300, 0, -200, 150)
+line(-200, 150, -100, 0)
+line(-300, 0, -100, 0)
+
+# Средняя линия
+line(-250, 75, -150, 75)
+
+text("MN || AC", -260, -50)
+
+# Пифагор
+line(100, -100, 250, -100)
+line(250, -100, 250, 50)
+line(100, -100, 250, 50)
+
+text("a² + b² = c²", 100, -150, 18)
+
+# Круг
+t.penup()
+t.goto(50, 100)
+t.pendown()
+t.circle(70)
+
+text("S = πr²", 150, 120, 18)
+
+screen.exitonclick()
