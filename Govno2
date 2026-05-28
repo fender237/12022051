@@ -1,35 +1,22 @@
 from PIL import Image
+import matplotlib.pyplot as plt
 
+# Пути к изображениям
 images = [
-
-    Image.open(r"6DE242F1-698B-4E5F-BD05-995C44F8B793.jpeg"),
-
-    Image.open(r"7E827DEA-94EC-4C58-9160-EE642140E590.jpeg"),
-
-    Image.open(r"C88CC98E-EFE2-49B4-B41D-A6FFA0CA4899.jpeg"),
-
-    Image.open(r"EDC0B19F-EAF6-4E29-8BAC-1D6B356CDCED.jpeg"),
-
-    Image.open(r"12B42DE1-166B-4F1A-AC9C-D5003ECE5858.jpeg")
-
+    "photo1.jpg",
+    "photo2.jpg",
+    "photo3.jpg",
+    "photo4.jpg",
+    "photo5.jpg"
 ]
 
-# Размеры
+# Создаём окно для 5 фото
+fig, axes = plt.subplots(1, 5, figsize=(15, 5))
 
-width = max(img.width for img in images)
+# Выводим каждое фото
+for ax, img_path in zip(axes, images):
+    img = Image.open(img_path)
+    ax.imshow(img)
+    ax.axis("off")
 
-height = sum(img.height for img in images)
-
-# Создаём холст
-
-result = Image.new("RGB", (width, height))
-
-y_offset = 0
-
-for img in images:
-
-    result.paste(img, (0, y_offset))
-
-    y_offset += img.height
-
-result.show()
+plt.show()
