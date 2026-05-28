@@ -1,22 +1,13 @@
 from PIL import Image
 import matplotlib.pyplot as plt
 
-# Пути к изображениям
-images = [
-    "photo1.jpg",
-    "photo2.jpg",
-    "photo3.jpg",
-    "photo4.jpg",
-    "photo5.jpg"
-]
+# Путь к изображению
+image_path = "EBE585A3-1051-43AB-8ADD-9CA41B5F481F.jpeg"
 
-# Создаём окно для 5 фото
-fig, axes = plt.subplots(1, 5, figsize=(15, 5))
+# Открываем изображение
+img = Image.open(image_path)
 
-# Выводим каждое фото
-for ax, img_path in zip(axes, images):
-    img = Image.open(img_path)
-    ax.imshow(img)
-    ax.axis("off")
-
+# Показываем изображение
+plt.imshow(img)
+plt.axis("off")  # Убираем оси
 plt.show()
