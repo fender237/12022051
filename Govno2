@@ -1,28 +1,34 @@
 import pygame
 import sys
 
-# Инициализация
 pygame.init()
 
-# Размер окна
 WIDTH = 1000
 HEIGHT = 600
 
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
-pygame.display.set_caption("Mini Mario Platformer")
+pygame.display.set_caption("Mario Platformer")
 
 clock = pygame.time.Clock()
 
 # Цвета
-SKY = (135, 206, 235)
-GREEN = (0, 200, 0)
-RED = (255, 60, 60)
 BROWN = (139, 69, 19)
-YELLOW = (255, 255, 0)
 BLACK = (0, 0, 0)
 
-# Шрифт
 font = pygame.font.SysFont("Arial", 32)
+
+# Загрузка изображений
+background = pygame.image.load("background.png")
+background = pygame.transform.scale(background, (WIDTH, HEIGHT))
+
+mario_img = pygame.image.load("mario.png")
+mario_img = pygame.transform.scale(mario_img, (50, 60))
+
+enemy_img = pygame.image.load("enemy.png")
+enemy_img = pygame.transform.scale(enemy_img, (40, 40))
+
+coin_img = pygame.image.load("coin.png")
+coin_img = pygame.transform.scale(coin_img, (25, 25))
 
 # Игрок
 player = pygame.Rect(100, 400, 50, 60)
@@ -35,9 +41,9 @@ on_ground = False
 
 # Монеты
 coins = [
-    pygame.Rect(350, 350, 20, 20),
-    pygame.Rect(650, 250, 20, 20),
-    pygame.Rect(850, 450, 20, 20)
+    pygame.Rect(350, 350, 25, 25),
+    pygame.Rect(650, 250, 25, 25),
+    pygame.Rect(850, 450, 25, 25)
 ]
 
 score = 0
@@ -59,7 +65,6 @@ running = True
 while running:
     clock.tick(60)
 
-    # События
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
@@ -82,13 +87,12 @@ while running:
     velocity_y += gravity
     player.y += velocity_y
 
-    # Проверка платформ
+    # Столкновения с платформами
     on_ground = False
 
     for platform in platforms:
         if player.colliderect(platform):
-            # Игрок падает сверху
-            if velocity_y > 0 and player.bottom <= platform.bottom:
+            if velocity_y > 0:
                 player.bottom = platform.top
                 velocity_y = 0
                 on_ground = True
@@ -99,7 +103,7 @@ while running:
     if enemy.x <= 400 or enemy.x >= 700:
         enemy_direction *= -1
 
-    # Столкновение с врагом
+    # Проигрыш
     if player.colliderect(enemy):
         print("GAME OVER")
         pygame.quit()
@@ -111,8 +115,8 @@ while running:
             coins.remove(coin)
             score += 1
 
-    # Отрисовка
-    screen.fill(SKY)
+    # Фон
+    screen.blit(background, (0, 0))
 
     # Платформы
     for platform in platforms:
@@ -120,13 +124,13 @@ while running:
 
     # Монеты
     for coin in coins:
-        pygame.draw.circle(screen, YELLOW, coin.center, 10)
+        screen.blit(coin_img, coin)
 
     # Игрок
-    pygame.draw.rect(screen, RED, player)
+    screen.blit(mario_img, player)
 
     # Враг
-    pygame.draw.rect(screen, BLACK, enemy)
+    screen.blit(enemy_img, enemy)
 
     # Счёт
     text = font.render(f"Coins: {score}", True, BLACK)
@@ -134,8 +138,8 @@ while running:
 
     # Победа
     if score == 3:
-        win_text = font.render("YOU WIN!", True, BLACK)
-        screen.blit(win_text, (400, 100))
+        win = font.render("YOU WIN!", True, BLACK)
+        screen.blit(win, (400, 100))
 
     pygame.display.update()
 
