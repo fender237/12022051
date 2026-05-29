@@ -4,9 +4,10 @@ import sys
 pygame.init()
 pygame.mixer.init()
 
-# =========================
+# ======================================
 # НАСТРОЙКИ
-# =========================
+# ======================================
+
 WIDTH = 1000
 HEIGHT = 600
 FPS = 60
@@ -16,15 +17,13 @@ pygame.display.set_caption("Super Mario Python")
 
 clock = pygame.time.Clock()
 
-# =========================
-# ЗАГРУЗКА
-# =========================
+# ======================================
+# ЗАГРУЗКА ФАЙЛОВ
+# ======================================
 
-# Фон
 background = pygame.image.load("background.png")
-background = pygame.transform.scale(background, (2000, HEIGHT))
+background = pygame.transform.scale(background, (2200, HEIGHT))
 
-# Анимация Mario
 mario_idle = pygame.image.load("mario_idle.png")
 mario_walk1 = pygame.image.load("mario_walk1.png")
 mario_walk2 = pygame.image.load("mario_walk2.png")
@@ -35,45 +34,47 @@ mario_walk2 = pygame.transform.scale(mario_walk2, (50, 60))
 
 walk_frames = [mario_walk1, mario_walk2]
 
-# Враг
 enemy_img = pygame.image.load("goomba.png")
 enemy_img = pygame.transform.scale(enemy_img, (45, 45))
 
-# Монета
 coin_img = pygame.image.load("coin.png")
 coin_img = pygame.transform.scale(coin_img, (25, 25))
 
-# Блок
 block_img = pygame.image.load("block.png")
 block_img = pygame.transform.scale(block_img, (50, 50))
 
-# Флаг
 flag_img = pygame.image.load("flag.png")
-flag_img = pygame.transform.scale(flag_img, (80, 200))
+flag_img = pygame.transform.scale(flag_img, (80, 220))
 
-# Музыка
+# ======================================
+# МУЗЫКА И ЗВУКИ
+# ======================================
+
 pygame.mixer.music.load("music.mp3")
 pygame.mixer.music.play(-1)
 
 coin_sound = pygame.mixer.Sound("coin.wav")
 jump_sound = pygame.mixer.Sound("jump.wav")
 
-# =========================
+# ======================================
 # ЦВЕТА
-# =========================
-BLACK = (0, 0, 0)
+# ======================================
+
 GREEN = (20, 200, 20)
+BLACK = (0, 0, 0)
 
 font = pygame.font.SysFont("Arial", 32)
 
-# =========================
+# ======================================
 # КАМЕРА
-# =========================
+# ======================================
+
 camera_x = 0
 
-# =========================
+# ======================================
 # ИГРОК
-# =========================
+# ======================================
+
 player = pygame.Rect(100, 400, 50, 60)
 
 player_speed = 5
@@ -86,44 +87,64 @@ on_ground = False
 animation_index = 0
 animation_timer = 0
 
-# =========================
-# ПЛАТФОРМЫ
-# =========================
-platforms = [
-    pygame.Rect(0, 550, 2000, 50),
+# ======================================
+# СЧЁТ И ЖИЗНИ
+# ======================================
 
-    pygame.Rect(300, 450, 200, 20),
-    pygame.Rect(650, 380, 200, 20),
-    pygame.Rect(1000, 320, 200, 20),
-    pygame.Rect(1450, 400, 150, 20),
+score = 0
+lives = 3
+
+game_over = False
+victory = False
+
+# ======================================
+# ПЛАТФОРМЫ
+# ======================================
+
+platforms = [
+    pygame.Rect(0, 550, 2200, 50),
+
+    pygame.Rect(250, 420, 150, 20),
+    pygame.Rect(550, 360, 150, 20),
+    pygame.Rect(900, 300, 150, 20),
+
+    pygame.Rect(1300, 420, 200, 20),
+    pygame.Rect(1700, 350, 200, 20),
 ]
 
-# =========================
+# ======================================
 # БЛОКИ
-# =========================
+# ======================================
+
 blocks = [
     pygame.Rect(450, 300, 50, 50),
     pygame.Rect(500, 300, 50, 50),
     pygame.Rect(550, 300, 50, 50),
+
+    pygame.Rect(1100, 250, 50, 50),
+    pygame.Rect(1150, 250, 50, 50),
+
+    pygame.Rect(1600, 260, 50, 50),
 ]
 
-# =========================
+# ======================================
 # МОНЕТЫ
-# =========================
-coins = [
-    pygame.Rect(470, 250, 25, 25),
-    pygame.Rect(520, 250, 25, 25),
-    pygame.Rect(570, 250, 25, 25),
+# ======================================
 
-    pygame.Rect(1100, 250, 25, 25),
-    pygame.Rect(1500, 330, 25, 25),
+coins = [
+    pygame.Rect(470, 240, 25, 25),
+    pygame.Rect(520, 240, 25, 25),
+    pygame.Rect(570, 240, 25, 25),
+
+    pygame.Rect(1120, 190, 25, 25),
+
+    pygame.Rect(1620, 200, 25, 25),
 ]
 
-score = 0
-
-# =========================
+# ======================================
 # ВРАГИ
-# =========================
+# ======================================
+
 enemies = [
     {
         "rect": pygame.Rect(700, 505, 45, 45),
@@ -131,37 +152,47 @@ enemies = [
     },
 
     {
-        "rect": pygame.Rect(1300, 505, 45, 45),
+        "rect": pygame.Rect(1450, 505, 45, 45),
         "dir": -2
+    },
+
+    {
+        "rect": pygame.Rect(1850, 505, 45, 45),
+        "dir": 2
     }
 ]
 
-# =========================
-# ФЛАГ
-# =========================
-flag = pygame.Rect(1850, 350, 80, 200)
+dead_goombas = []
 
-# =========================
+# ======================================
+# ФЛАГ
+# ======================================
+
+flag = pygame.Rect(2050, 330, 80, 220)
+
+# ======================================
 # ИГРА
-# =========================
+# ======================================
+
 running = True
-win = False
 
 while running:
 
     clock.tick(FPS)
 
-    # =====================
+    # ==================================
     # СОБЫТИЯ
-    # =====================
+    # ==================================
+
     for event in pygame.event.get():
 
         if event.type == pygame.QUIT:
             running = False
 
-    # =====================
+    # ==================================
     # УПРАВЛЕНИЕ
-    # =====================
+    # ==================================
+
     keys = pygame.key.get_pressed()
 
     moving = False
@@ -180,17 +211,19 @@ while running:
         on_ground = False
         jump_sound.play()
 
-    # =====================
+    # ==================================
     # ГРАВИТАЦИЯ
-    # =====================
+    # ==================================
+
     velocity_y += gravity
     player.y += velocity_y
 
     on_ground = False
 
-    # =====================
+    # ==================================
     # СТОЛКНОВЕНИЯ
-    # =====================
+    # ==================================
+
     all_platforms = platforms + blocks
 
     for platform in all_platforms:
@@ -202,13 +235,16 @@ while running:
                 velocity_y = 0
                 on_ground = True
 
-    # =====================
-    # АНИМАЦИЯ
-    # =====================
+    # ==================================
+    # АНИМАЦИЯ MARIO
+    # ==================================
+
     if moving:
+
         animation_timer += 1
 
         if animation_timer >= 10:
+
             animation_timer = 0
             animation_index += 1
 
@@ -220,52 +256,78 @@ while running:
     else:
         current_sprite = mario_idle
 
-    # =====================
+    # ==================================
     # ВРАГИ
-    # =====================
-    for enemy in enemies:
+    # ==================================
+
+    for enemy in enemies[:]:
 
         enemy["rect"].x += enemy["dir"]
 
         if enemy["rect"].x <= 600:
             enemy["dir"] = 2
 
-        if enemy["rect"].x >= 1400:
+        if enemy["rect"].x >= 2000:
             enemy["dir"] = -2
 
-        # Проигрыш
+        # Столкновение
         if player.colliderect(enemy["rect"]):
-            print("GAME OVER")
-            pygame.quit()
-            sys.exit()
 
-    # =====================
+            # Mario прыгает сверху
+            if velocity_y > 0 and player.bottom < enemy["rect"].centery:
+
+                dead_goombas.append({
+                    "x": enemy["rect"].x,
+                    "y": enemy["rect"].y,
+                    "timer": 30
+                })
+
+                enemies.remove(enemy)
+
+                velocity_y = -10
+
+            else:
+
+                lives -= 1
+
+                player.x = 100
+                player.y = 400
+
+                if lives <= 0:
+                    game_over = True
+
+    # ==================================
     # МОНЕТЫ
-    # =====================
+    # ==================================
+
     for coin in coins[:]:
 
         if player.colliderect(coin):
+
             coins.remove(coin)
             score += 1
             coin_sound.play()
 
-    # =====================
-    # ФЛАГ
-    # =====================
-    if player.colliderect(flag):
-        win = True
+    # ==================================
+    # ПОБЕДА
+    # ==================================
 
-    # =====================
+    if player.colliderect(flag):
+        victory = True
+
+    # ==================================
     # КАМЕРА
-    # =====================
+    # ==================================
+
     camera_x = player.x - 200
 
     if camera_x < 0:
         camera_x = 0
 
-    # =====================
+    # ==================================
     # ОТРИСОВКА
-    # =====================
+    # ==================================
+
     screen.fill((0, 0, 0))
 
     # Фон
@@ -273,6 +335,7 @@ while running:
 
     # Платформы
     for platform in platforms:
+
         pygame.draw.rect(
             screen,
             GREEN,
@@ -286,6 +349,7 @@ while running:
 
     # Блоки
     for block in blocks:
+
         screen.blit(
             block_img,
             (block.x - camera_x, block.y)
@@ -293,6 +357,7 @@ while running:
 
     # Монеты
     for coin in coins:
+
         screen.blit(
             coin_img,
             (coin.x - camera_x, coin.y)
@@ -300,6 +365,7 @@ while running:
 
     # Враги
     for enemy in enemies:
+
         screen.blit(
             enemy_img,
             (
@@ -307,6 +373,27 @@ while running:
                 enemy["rect"].y
             )
         )
+
+    # Мёртвые Goomba
+    for dead in dead_goombas[:]:
+
+        dead["timer"] -= 1
+
+        squashed = pygame.transform.scale(
+            enemy_img,
+            (45, 20)
+        )
+
+        screen.blit(
+            squashed,
+            (
+                dead["x"] - camera_x,
+                dead["y"] + 20
+            )
+        )
+
+        if dead["timer"] <= 0:
+            dead_goombas.remove(dead)
 
     # Флаг
     screen.blit(
@@ -321,17 +408,64 @@ while running:
     )
 
     # Очки
-    text = font.render(f"Coins: {score}", True, BLACK)
-    screen.blit(text, (20, 20))
+    score_text = font.render(
+        f"Coins: {score}",
+        True,
+        BLACK
+    )
 
-    # Победа
-    if win:
-        win_text = font.render(
+    screen.blit(score_text, (20, 20))
+
+    # Жизни
+    lives_text = font.render(
+        f"Lives: {lives}",
+        True,
+        BLACK
+    )
+
+    screen.blit(lives_text, (20, 60))
+
+    # ==================================
+    # ПОБЕДА
+    # ==================================
+
+    if victory:
+
+        victory_text = font.render(
             "YOU WIN!",
             True,
             BLACK
         )
-        screen.blit(win_text, (400, 100))
+
+        screen.blit(victory_text, (400, 200))
+
+        pygame.display.update()
+
+        pygame.time.delay(3000)
+
+        pygame.quit()
+        sys.exit()
+
+    # ==================================
+    # GAME OVER
+    # ==================================
+
+    if game_over:
+
+        game_text = font.render(
+            "GAME OVER",
+            True,
+            BLACK
+        )
+
+        screen.blit(game_text, (360, 200))
+
+        pygame.display.update()
+
+        pygame.time.delay(3000)
+
+        pygame.quit()
+        sys.exit()
 
     pygame.display.update()
 
